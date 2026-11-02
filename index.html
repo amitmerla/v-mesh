@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#050505">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="V/MESH — an off-grid walkie-talkie cell for phones standing close together.">
+  <title>V/MESH — Off-grid cell</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- The mask: one symbol, reused for the logo, the hero and the favicon -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="vmask" viewBox="0 0 100 120">
+      <path class="mk-face" d="M50 5C75 5 89 26 89 52c0 29-15 53-39 63C26 105 11 81 11 52 11 26 25 5 50 5Z"/>
+      <ellipse class="mk-cheek" cx="29" cy="66" rx="9" ry="5.5"/>
+      <ellipse class="mk-cheek" cx="71" cy="66" rx="9" ry="5.5"/>
+      <path class="mk-line" d="M21 41Q32 29 45 39M55 39Q68 29 79 41"/>
+      <path class="mk-ink" d="M26 49q9-7 18-1-9 4-18 1ZM56 48q9-6 18 1-9 3-18-1Z"/>
+      <path class="mk-thin" d="M50 45l-3 20q3 3 6 0"/>
+      <path class="mk-ink" d="M50 76c-8-6-21-4-29-12 2 11 13 18 23 15 3-1 5-2 6-2s3 1 6 2c10 3 21-4 23-15-8 8-21 6-29 12Z"/>
+      <path class="mk-line" d="M33 84q17 11 34 0"/>
+      <path class="mk-ink" d="M48 91q2 15 2 21 0-6 2-21Z"/>
+    </symbol>
+  </svg>
+  <canvas id="fxEmbers" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ───────── Top bar ───────── -->
+  <header class="topbar" id="topbar">
+    <button class="brand" id="brand" aria-label="V/MESH home">
+      <svg class="vmark" viewBox="0 0 100 120" aria-hidden="true"><use href="#vmask"/></svg>
+      <span class="brand-word">V<i>/</i>MESH</span>
+    </button>
+    <nav class="steps" id="steps" aria-label="Progress">
+      <i data-s="intro"></i><i data-s="name"></i><i data-s="link"></i><i data-s="role"></i><i data-s="lobby"></i><i data-s="test"></i><i data-s="chat"></i>
+    </nav>
+    <div class="top-actions">
+      <span class="net-pill" id="netPill"><b></b><span>OFF-GRID</span></span>
+      <button class="icon-btn" id="btnSound" aria-label="Sound">
+        <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="wave" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg>
+      </button>
+      <button class="icon-btn" id="btnTour" aria-label="Walk me through">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.4"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Host: knock requests surface here on every screen -->
+  <div class="knock-dock" id="knockDock" aria-live="polite"></div>
+
+  <main id="stage">
+
+    <!-- ───────── 0 · Intro ───────── -->
+    <section class="screen active" id="scr-intro" data-screen="intro">
+      <div class="wrap intro">
+        <div class="hero-mark rv" id="heroMark">
+          <svg viewBox="0 0 220 220" aria-hidden="true">
+            <defs>
+              <radialGradient id="hg" cx="50%" cy="45%" r="60%">
+                <stop offset="0" stop-color="#ff2d48" stop-opacity=".35"/>
+                <stop offset="1" stop-color="#ff2d48" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle class="halo" cx="110" cy="110" r="100" fill="url(#hg)"/>
+            <circle class="ring" cx="110" cy="110" r="86"/>
+            <g class="hero-mask"><use href="#vmask" x="55" y="44" width="110" height="132"/></g>
+          </svg>
+          <div class="pulse-rings"><span></span><span></span><span></span></div>
+        </div>
+        <p class="kicker rv">Remember, remember · the fifth of November</p>
+        <h1 class="display rv">
+          <span class="ln">No towers.</span>
+          <span class="ln">No internet.</span>
+          <span class="ln red">Just us.</span>
+        </h1>
+        <p class="lede rv">V/MESH links phones standing close together into a private, host-guarded cell — then lets you talk like walkie-talkies. No carrier. No cloud. No witnesses.</p>
+        <div class="cta-row rv">
+          <button class="cta" id="btnStart"><span>Start</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <button class="ghost" id="btnWalk">Walk me through</button>
+        </div>
+        <button class="link-btn rv" id="btnHow">How can phones talk off-grid? →</button>
+        <div class="intro-stats rv">
+          <div id="statBars"><b>0</b><span>bars needed</span></div>
+          <div id="statDtls"><b>DTLS</b><span>end-to-end</span></div>
+          <div id="statGate"><b>2-key</b><span>entry gate</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── 1 · Identity ───────── -->
+    <section class="screen" id="scr-name" data-screen="name">
+      <div class="wrap">
+        <p class="kicker rv">Step 1 · Identity</p>
+        <h2 class="title rv">Who are you <em>tonight</em>?</h2>
+        <p class="sub rv">Pick a codename. Only phones admitted to your cell will ever see it.</p>
+        <div class="avatar-xl rv" id="avatarPreview"><span>?</span></div>
+        <label class="field rv" id="fieldName">
+          <input id="inName" maxlength="18" placeholder=" " autocomplete="off" autocapitalize="words" spellcheck="false">
+          <span>Codename</span>
+          <button class="field-act" id="btnDice" type="button" aria-label="Random codename">
+            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.2"/><circle cx="15" cy="15" r="1.2"/><circle cx="15" cy="9" r="1.2"/><circle cx="9" cy="15" r="1.2"/></svg>
+          </button>
+        </label>
+        <div class="chips rv" id="nameIdeas"></div>
+        <p class="label rv">Signal colour</p>
+        <div class="swatches rv" id="swatches"></div>
+        <button class="cta wide rv" id="btnName" disabled><span>Continue</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ───────── 2 · Link method ───────── -->
+    <section class="screen" id="scr-link" data-screen="link">
+      <div class="wrap">
+        <p class="kicker rv">Step 2 · The airwaves</p>
+        <h2 class="title rv">How will your phones <em>find</em> each other?</h2>
+        <p class="sub rv">Pick a transport. Everything after this — handshake, approval, test, chat — runs the same protocol.</p>
+        <div class="methods" id="methods"></div>
+        <p class="label rv">What this device can do</p>
+        <div class="caps rv" id="caps"></div>
+      </div>
+    </section>
+
+    <!-- ───────── 3 · Role ───────── -->
+    <section class="screen" id="scr-role" data-screen="role">
+      <div class="wrap">
+        <p class="kicker rv">Step 3 · The key</p>
+        <h2 class="title rv">Who holds the <em>key</em>?</h2>
+        <p class="sub rv">Every cell has one host. The host's phone relays messages and decides who gets in.</p>
+        <div class="roles rv" id="roles">
+          <button class="role-tile" data-role="host" id="tileHost">
+            <div class="role-ic"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="6"/><circle cx="24" cy="24" r="14" class="dash"/><circle cx="24" cy="24" r="21" class="dash"/></svg></div>
+            <b>Host a cell</b><span>Open a private network and guard its door.</span>
+          </button>
+          <button class="role-tile" data-role="guest" id="tileGuest">
+            <div class="role-ic"><svg viewBox="0 0 48 48"><path d="M14 34 L24 14 L34 34"/><circle cx="24" cy="38" r="2.5"/></svg></div>
+            <b>Join a cell</b><span>Knock, prove the passphrase, wait for the host.</span>
+          </button>
+          <button class="role-tile wide" data-role="lots" id="tileLots">
+            <div class="role-ic"><svg viewBox="0 0 48 48"><rect x="14" y="8" width="20" height="32" rx="4"/><path d="M14 24h20"/><circle cx="24" cy="16" r="2"/><circle cx="20" cy="30" r="2"/><circle cx="28" cy="34" r="2"/></svg></div>
+            <b>Can't decide? Draw lots</b><span>Everyone draws a domino. Highest number hosts.</span>
+          </button>
+        </div>
+
+        <div class="panel" id="lotsPanel" hidden>
+          <div class="lots-stage">
+            <div class="domino-big" id="dominoBig"><div class="half"><b id="lotNum">?</b></div><div class="half pips"></div></div>
+            <div class="lots-list" id="lotsList"></div>
+          </div>
+          <p class="hint" id="lotsHint"></p>
+          <button class="cta wide" id="btnDraw"><span>Draw my domino</span></button>
+        </div>
+
+        <div class="panel" id="hostPanel" hidden>
+          <label class="field"><input id="inCell" maxlength="24" placeholder=" " autocomplete="off" spellcheck="false"><span>Cell name</span></label>
+          <label class="field" id="fieldPass">
+            <input id="inPass" maxlength="48" placeholder=" " autocomplete="off" spellcheck="false" autocapitalize="off">
+            <span>Passphrase</span>
+            <button class="field-act" id="btnGenPass" type="button" aria-label="Generate passphrase"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></button>
+          </label>
+          <div class="meter" id="passMeter"><i></i><span></span></div>
+          <label class="toggle" id="toggleAuto">
+            <input type="checkbox" id="inAuto">
+            <i></i>
+            <div><b>Auto-admit correct passphrase</b><span>Off = you approve every phone by hand (recommended).</span></div>
+          </label>
+          <button class="cta wide" id="btnOpenCell"><span>Open the cell</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── 4 · Lobby ───────── -->
+    <section class="screen" id="scr-lobby" data-screen="lobby">
+      <div class="wrap">
+        <p class="kicker rv" id="lobbyKicker">Step 4 · The cell</p>
+        <h2 class="title rv" id="lobbyTitle">Lobby</h2>
+        <p class="sub rv" id="lobbySub"></p>
+        <div class="radar rv" id="radar">
+          <div class="radar-rings"></div>
+          <div class="radar-sweep"></div>
+          <div class="radar-cross"></div>
+          <div class="radar-blips" id="radarBlips"></div>
+          <div class="radar-core" id="radarCore"><span></span></div>
+        </div>
+        <div id="lobbyBody"></div>
+      </div>
+    </section>
+
+    <!-- ───────── 5 · Test ───────── -->
+    <section class="screen" id="scr-test" data-screen="test">
+      <div class="wrap">
+        <p class="kicker rv">Step 5 · Signal check</p>
+        <h2 class="title rv">Prove the line is <em>clean</em>.</h2>
+        <p class="sub rv" id="testSub">Round-trip latency, burst throughput and integrity — measured over the same link your messages will use.</p>
+        <div class="test-hero rv" id="testHero">
+          <div class="gauge" id="gauge">
+            <svg viewBox="0 0 200 120"><path class="g-bg" d="M20 110 A80 80 0 0 1 180 110"/><path class="g-fg" id="gaugeArc" d="M20 110 A80 80 0 0 1 180 110"/></svg>
+            <div class="gauge-read"><b id="gaugeVal">—</b><span>ms round-trip</span></div>
+          </div>
+          <div class="verdict" id="verdict">Ready when you are.</div>
+        </div>
+        <div class="test-list" id="testList"></div>
+        <div class="cta-row stack rv">
+          <button class="cta wide" id="btnRunTest"><span>Run signal test</span></button>
+          <button class="ghost wide" id="btnToChat">Open the channel →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── 6 · Chat ───────── -->
+    <section class="screen chat-screen" id="scr-chat" data-screen="chat">
+      <div class="chat-head" id="chatHead">
+        <div class="ch-left">
+          <div class="ch-dial" id="chDial"><span>CH</span><b id="chNum">05</b></div>
+          <div class="ch-meta">
+            <b id="chCell">Cell</b>
+            <span id="chSub">0 phones · DTLS</span>
+          </div>
+        </div>
+        <div class="ch-right">
+          <div class="ch-faces" id="chFaces"></div>
+          <button class="icon-btn" id="btnMembers" aria-label="Members and security"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></button>
+        </div>
+      </div>
+      <div class="sas-strip" id="sasStrip"></div>
+      <div class="chat-log" id="chatLog" aria-live="polite"></div>
+      <div class="typing" id="typing"></div>
+      <div class="quick" id="quick"></div>
+      <form class="composer" id="composer" autocomplete="off">
+        <input id="inMsg" maxlength="400" placeholder="Transmit…" enterkeyhint="send" autocomplete="off">
+        <button class="ptt" id="btnPtt" type="submit" aria-label="Transmit">
+          <span class="ptt-waves"><i></i><i></i><i></i></span>
+          <svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2-6-8-2z"/></svg>
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Bottom sheet -->
+  <div class="sheet-wrap" id="sheetWrap" aria-hidden="true">
+    <div class="sheet-scrim" id="sheetScrim"></div>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+      <div class="sheet-grip"></div>
+      <button class="sheet-x icon-btn" id="sheetX" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+  </div>
+
+  <canvas id="fxFireworks" aria-hidden="true"></canvas>
+  <div class="alarm" id="alarm" aria-hidden="true"></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="js/crypto.js"></script>
+  <script src="js/qr.js"></script>
+  <script src="js/fx.js"></script>
+  <script src="js/net.js"></script>
+  <script src="js/help.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
